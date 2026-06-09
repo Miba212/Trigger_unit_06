@@ -3,7 +3,7 @@
 #include "trigger_timesync.h"
 
 // === Trigger unit time sync state ===
-bool isTimerActive = false;
+static bool isTimerActive = false;
 static uint64_t triggerUnixBaseMs = 1000 * 1000;   // Last received unix time (ms)
 static uint32_t triggerBaseMillis = 0;             // millis() when unix base was set
 static bool triggerHasRealTime = false;
