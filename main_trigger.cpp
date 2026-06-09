@@ -10,7 +10,6 @@
 #include "trigger_test.h"
 #include <esp_task_wdt.h>
 #include <esp_wifi.h>
-#include "trigger_sensor.h"
 #include "wifi_config_trigger.h"
 #include "trigger_timesync.h"
 
@@ -205,7 +204,11 @@ void setup() {
     // ==========================================
     
     commEspNowTriggerInit();
-    
+
+    // Register callbacks FIRST, before any pairing/reconnect activity
+    commEspNowTriggerSetStateCallback(handleStateUpdate);
+    triggerSensorSetTriggerCallback(onSensorTriggered);
+
     if (!configTrigger.isPaired()) {
         Serial.println("[TRIGGER] Not paired - entering STATE 1");
         startState1FreshPairing();
@@ -213,10 +216,6 @@ void setup() {
         Serial.println("[TRIGGER] Previously paired - entering STATE 2");
         startState2Reconnection();
     }
-
-    // Register callbacks
-    commEspNowTriggerSetStateCallback(handleStateUpdate);
-    triggerSensorSetTriggerCallback(onSensorTriggered);
     
     Serial.printf("[TRIGGER] Boot complete - Unit ID: %d\n", configTrigger.get().unitID);
     
